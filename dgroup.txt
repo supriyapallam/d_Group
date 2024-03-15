@@ -1,0 +1,47 @@
+//Design Code
+`include "D_l.v"
+`include "d_ms.v"
+`include "d_peff.v"
+`include "d_neff"
+module d_group(output wire ql,qms,qpe,qne,input clk,d);
+  d_latch a1(ql,,d,clk);
+  master_slave_dlatch a2(qms,,clk,d);
+  d_ffpe a3(qpe,,clk,d);
+  d_ffne a4(qne,,clk,d);
+endmodule
+
+//Test Bench Code
+module tb();
+  wire ql,qms,qpe,qne;
+  reg clk,d;
+  d_group DUT(ql,qms,qpe,qne,clk,d);
+  
+  initial
+    begin
+      clk=1'b0;
+      forever #5 clk=~clk;
+    end
+  
+  initial
+    begin
+      d=1'b0;
+      #20;
+      d=1'b1;
+      #20;
+      d=1'b0;
+      #10;
+      $finish;
+    end
+  
+  initial
+    begin
+      $dumpfile("test.vcd");
+      $dumpvars(1);
+    end
+  
+  initial
+    begin
+      $timeformat(-9,0,"ns",10);
+      $monitor("time=%0t,d=%b,ql=%b,qms=%b,qpe=%b,qne=%b",$time,d,ql,qms,qpe,qne);
+    end
+endmodule
